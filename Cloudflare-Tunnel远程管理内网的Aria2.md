@@ -8,11 +8,12 @@
 
 最近看到了Cloudflare tunnel的介绍，可以免费永久的搭建通道来管控内网（家里）设备和服务，还是比较有吸引力的。
 
-搭建该Tunnel需要Cloudflare的账号，这个可以免费注册。还需要一个域名，这个有免费的，比如[Cloudns](https://www.cloudns.net/). 也有收费的，收费有高有低，低的一年也就不到10元人民币,如[Namecheap](https://www.namecheap.com),[Namesoli](https://www.namesilo.com/), [Spaceship](https://www.spaceship.com/)等网站中的某些域名。
+搭建该Tunnel需要Cloudflare的账号，这个可以免费注册。  
+还需要一个域名，这个有免费的，比如[Cloudns](https://www.cloudns.net/). 也有收费的，收费有高有低，低的一年也就不到10元人民币,如[Namecheap](https://www.namecheap.com),[Namesoli](https://www.namesilo.com/), [Spaceship](https://www.spaceship.com/)等网站中的某些域名。
 
 搭建的方法网上很多就不多说了，按教程很快就能搭建好，也能顺利的实现穿透内网的目的。
-顺便也折腾了其它功能，包括远程管理内网软路由器上的下载功能，Transmission和Qbt到相应的页面进去就可以正常使用，但Aria2就不行，一直连不上成功不了。
-Aria2支持的协议多，不想放弃。
+顺便也折腾了其它功能，包括远程管理内网软路由器上的下载功能，Transmission和Qbt到相应的页面进去就可以正常使用，但Aria2就不行，一直连不上成功不了。  
+Aria2支持的协议多，不想放弃。  
 在网上包括google找了教程，但很难找到，唯一的一个讨论的帖子是在[reddit](https://www.reddit.com/r/selfhosted/comments/10bmp74/is_it_possible_to_access_the_ariang_web_ui_using/)上，一年前的帖子，而且比较模糊。
 结合这个帖子，自己摸索了几天，终于搞通了。
 步骤见下，里面几个坑要注意，
