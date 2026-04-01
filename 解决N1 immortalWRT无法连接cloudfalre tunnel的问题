@@ -1,0 +1,13 @@
+解决N1 immortalWRT无法连接cloudfalre tunnel的问题
+按正常建立Cloudflare tunnel，在N1 immortalWRT的docker中创建cloudflare本地镜像，CF网站正常识别然后正常建立tunnel,测试远程访问家里的N1正常。
+但是随后一两天后断连，遂在CF和N1 docer上重建隧道，CF网站上的子域名不变，和第一次一样，此时tunnel显示健康。
+第一个坑，虽然此时显示健康，当远程访问始终不通，远程访问浏览器端报错#1033.
+        经查询，由于第二次建立时没有删掉CF 域名下第一次创建tunnel时的DNS记录，第二次创建tunnel时建立的子域名由于和第一次一样，CF认为已经有此域名DNS记录，故不会更新DFS的目标，导致tunel的域名指向错误目标。
+        解决办法，更改DNS目标到第二次创建的网址，通常是“一长串代码 + .cfargotunnel.com”。若找不到，可在此tunnel中新建一个链接，在DNS中查询即可。
+第二个坑，上面新建的tunnel，一两天后有连不上上了，显示#1033错误。于是重复删掉当前新建tunnel,但是在docker上新建cloudflared启动后,CF网站死活链接不上，状态是“inactive”卡在无法链接.
+         查询乐一晚上，终于明白，我连续出现断连"down"，应该和网络提供商也就是电信提供的DNS有关。
+          我在主路由中设置的是自动获取DNS.据说此类DNS经常会出一些莫名其妙的问题。
+          于是按网上的帖子，先把N1的/etc/resolv.conf的namesever由127.0.0.1改成了8.8.8.8，保存，重启N1, CF上的tunnel连上了并显示绿色的“healthy”.
+          先观察一段时间，看是否解决了问题。
+
+同时，按网上的教程，又把主路由的wan口的DNS从自动获取改成了 阿里和谷歌的DNS.也先看看效果
