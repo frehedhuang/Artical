@@ -1,0 +1,29 @@
+解决N1 Openwrt Passwall无法翻墙以及无法连接cloudfalre tunnel的问题
+
+N1 Openwrt Passwall无法翻墙
+ 首先在“规则管理”标签页更新GFW list, chnsite, geoip,geosit等，更新不成功就在相关页面更换网站，passwll “规则管理”标签页都给了好几个网站，自己选一个或多个即可
+ 若节点是CF是用workers/pages创建的免费节点，基本设置标签页的DNS下的远程DNS，请不要选CF的DNS,选google的，否则代理不了
+
+Cloudfalre tunnel不通的问题
+按正常建立Cloudflare tunnel，在N1 immortalWRT的docker中创建cloudflare本地镜像，CF网站正常识别然后正常建立tunnel,测试远程访问家里的N1正常。
+但是随后一两天后断连，遂在CF和N1 docer上重建隧道，CF网站上的子域名不变，和第一次一样，此时tunnel显示健康。
+第一个坑，虽然此时显示健康，当远程访问始终不通，远程访问浏览器端报错#1033.
+        经查询，由于第二次建立时没有删掉CF 域名下第一次创建tunnel时的DNS记录，第二次创建tunnel时建立的子域名由于和第一次一样，CF认为已经有此域名DNS记录，故不会更新DFS的目标，导致tunel的域名指向错误目标。
+        解决办法，更改DNS目标到第二次创建的网址，通常是“一长串代码 + .cfargotunnel.com”。若找不到，可在此tunnel中新建一个链接，在DNS中查询即可。
+第二个坑，上面新建的tunnel，一两天后又连不上上了，显示#1033错误。于是重复删掉当前新建tunnel,但是在docker上新建cloudflared启动后,CF网站死活链接不上，状态是“inactive”卡在无法链接.
+        后经反复测试，发现只要N1用代理导致tunnel走代理，就无法建立链接。在第一个坑CF DNS记录没有问题的前提下，后来出现的链接错误，包括inactive, down等，都是与N1开代理有关，只要Tunnel走代理，就不通.
+        顺着这个思路，
+        第一种方法.在代理软件passwall,homeproxy中，把“engage.cloudflareclient.com”添加到这些软件代理规则的直连列表中，问题解决。但是这样会有其他cf的网站可能走了代理，可能不太保险。
+           另外，如果用了fake IP,也要看看代理软件里面可不可以通过设置Fake-IP-Filter，对cloudfale不使用fake id，让访问返回真实ip地址, 例如，在openclash中，
+           Cloudflare tunnel
+            +.argotunnel.com
+         第二种方法，
+              第一步，把docker里的cloudflarer容器的环境变量改为如下：这是告知系统cloudflared不走代理。这个设置不会影响docke其他容器的代理状况。
+                http_proxy=
+                http2_proxy=
+                all_proxy=
+                no_proxy=*
+              第二步，在翻墙软件中，把docker cloudflared的内网IP地址如127.0.0.2放进直连里面。
+     
+
+
