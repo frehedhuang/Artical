@@ -1,8 +1,13 @@
 解决N1 Openwrt Passwall无法翻墙以及无法连接cloudfalre tunnel的问题
 
 N1 Openwrt Passwall无法翻墙
- 首先在“规则管理”标签页更新GFW list, chnsite, geoip,geosit等，更新不成功就在相关页面更换网站，passwll “规则管理”标签页都给了好几个网站，自己选一个或多个即可
- 若节点是CF是用workers/pages创建的免费节点，基本设置标签页的DNS下的远程DNS，请不要选CF的DNS,选google的，否则代理不了
+ 1.首先在“规则管理”标签页更新GFW list, chnsite, geoip,geosit等，更新不成功就在相关页面更换网站，passwll “规则管理”标签页都给了好几个网站，自己选一个或多个即可
+     a. 手动离线安装passwall.ipk时默认不自行安装一些必要的插件，要自行核对看缺哪些插件，在安装报错表里检查缺哪个，缺哪个就在github上作者的release里面的依赖包里找哪个。
+     b. 即便是自动安装(包括网上找的固件包，自己编译的固件包等)的passwall，也有可能geoip和geosite默认不安装，这样passwall启动后无法翻墙，表现为启动后tcp core和udp core未启动。
+      此时可在规则管理页面手动更新，若更新不了在下拉菜单中换网站试试。若还不行，就在系统>软件包下更新并查看有无 v2ray-geoip和v2ray-geosite这两个ipk,有就安装。
+      没有的话就在网上找。github上作者的release里面有所有依赖包，可下载后离线安装。网址https://github.com/Openwrt-Passwall。
+
+ 2.若节点是CF是用workers/pages创建的免费节点，基本设置标签页的DNS下的远程DNS，请不要选CF的DNS,选google的，否则代理不了
 
 Cloudfalre tunnel不通的问题
 按正常建立Cloudflare tunnel，在N1 immortalWRT的docker中创建cloudflare本地镜像，CF网站正常识别然后正常建立tunnel,测试远程访问家里的N1正常。
@@ -18,12 +23,13 @@ Cloudfalre tunnel不通的问题
            Cloudflare tunnel
             +.argotunnel.com
          第二种方法，
-              第一步，把docker里的cloudflarer容器的环境变量改为如下：这是告知系统cloudflared不走代理。这个设置不会影响docke其他容器的代理状况。
+              第一步，把docker里的cloudflarer容器的环境变量改为如下：注意前三个=后面没有空格。这是告知系统cloudflared不走代理。这个设置不会影响docke其他容器的代理状况。
                 http_proxy=
                 http2_proxy=
                 all_proxy=
                 no_proxy=*
-              第二步，在翻墙软件中，把docker cloudflared的内网IP地址如127.0.0.2放进直连里面。
+                完成后重启cloudflared容器，用翻墙软件的全局代理测试若可正常接通，则不需第二步
+              第二步，第一步全局代理下若不能接通，则在翻墙软件中，把docker cloudflared的内网IP地址如127.0.0.2放进直连里面。
      
 
 
